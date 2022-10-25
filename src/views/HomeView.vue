@@ -53,7 +53,9 @@ onMounted(() => {
 
     <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden">
       <div v-if="!loading" ref="el" class="w-2/3 overflow-y-scroll h-full flex items-center justify-between gap-y-10 flex-wrap">
-        <PokemonCard v-for="item in pokemonList" :key="item.idx" :name="item.name" :img="item.sprites.front_default" :types="item.types" />
+        <router-link v-for="item in pokemonList" :key="item.idx" :to="`/pokemon/${item.id}`">
+          <PokemonCard :name="item.name" :img="item.sprites.front_default" :types="item.types" />
+        </router-link>
       </div>
       <div v-else class="w-2/3 flex items-center justify-between gap-y-10 flex-wrap">
         <SkeletonCards v-for="item in 21" :key="item" class="animate-pulse" />
