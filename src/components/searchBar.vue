@@ -16,9 +16,7 @@ const searchPokemon = async () => {
 </script>
 
 <template>
-  <div class="mx-auto">
-    <form @submit.prevent="searchPokemon">
-      <input v-model="pokemonName" class="py-4 rounded-md w-2/3 shadow-sm px-6 focus:outline-none focus:ring-1 focus:ring-sky-400" placeholder="Search pokemon by name" type="text">
-    </form>
-  </div>
+  <form class="w-2/3 mx-auto" @submit.prevent="searchPokemon">
+    <input v-model="pokemonName" class="py-4 rounded-md w-full shadow-sm px-6 focus:outline-none focus:ring-1 focus:ring-sky-400" placeholder="Search pokemon by name" type="text">
+  </form>
 </template>

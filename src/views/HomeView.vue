@@ -1,17 +1,18 @@
 <script setup>
 import { defineComponent, inject, onMounted, ref } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import { RouterView } from 'vue-router'
 import axios from 'axios'
 import Searchbar from '../components/searchBar.vue'
 import PokemonCard from '../components/pokemonCards.vue'
 import SkeletonCards from '../components/skeletonsCard.vue'
+import PokemonDetail from '../components/pokemonDetail.vue'
 
 defineComponent({
   components: {
     Searchbar,
     PokemonCard,
     SkeletonCards,
+    PokemonDetail,
   },
 })
 
@@ -19,6 +20,8 @@ const $pokeDex = inject('$pokeDex')
 const loading = ref(true)
 const pokemonList = ref([])
 const el = ref(null)
+const open = ref(false)
+const detail = ref({})
 
 const getPokemons = async (payload) => {
   const fetched = await axios.get(`${$pokeDex}pokemon?limit=21&offset=${payload ? pokemonList.value.length : 0}`)
@@ -30,6 +33,11 @@ const getPokemons = async (payload) => {
       loading.value = false
     }
   }
+}
+
+const getDetailPokemon = (payload) => {
+  detail.value = payload
+  open.value = true
 }
 
 useInfiniteScroll(
@@ -47,22 +55,18 @@ onMounted(() => {
 
 <template>
   <div class="container h-full mx-auto">
-    <div class="mx-auto max-w-7xl h-[10vh] flex items-center my-auto">
-      <Searchbar class="w-full" />
+    <div class="mx-auto max-w-7xl h-[10vh] my-auto grid place-items-center">
+      <Searchbar />
     </div>
 
-    <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden">
-      <div v-if="!loading" ref="el" class="w-2/3 overflow-y-scroll h-full flex items-center justify-between gap-y-10 flex-wrap">
-        <router-link v-for="item in pokemonList" :key="item.idx" :to="`/pokemon/${item.id}`">
-          <PokemonCard :name="item.name" :img="item.sprites.front_default" :types="item.types" />
-        </router-link>
+    <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden ">
+      <div v-if="!loading" ref="el" class="w-2/3 overflow-y-scroll h-full flex items-center justify-between gap-y-10 flex-wrap mx-auto">
+        <PokemonCard v-for="item in pokemonList" :key="item.idx" class="cursor-pointer" :name="item.name" :img="item.sprites.front_default" :types="item.types" @click="getDetailPokemon(item)" />
       </div>
       <div v-else class="w-2/3 flex items-center justify-between gap-y-10 flex-wrap">
         <SkeletonCards v-for="item in 21" :key="item" class="animate-pulse" />
       </div>
-      <div class="w-1/3 bg-slate-500 h-full">
-        <RouterView />
-      </div>
     </div>
   </div>
+  <PokemonDetail :open="open" :detail="detail" @close="open = false" />
 </template>

@@ -4,7 +4,6 @@ import { RouterView } from 'vue-router'
 
 <template>
   <div class="bg-slate-100 h-screen">
-    <Searchbar />
     <RouterView />
   </div>
 </template>

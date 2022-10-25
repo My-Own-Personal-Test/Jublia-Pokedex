@@ -18,11 +18,11 @@ const props = defineProps({
 <template>
   <div class="shadow-sm rounded-lg border border-solid border-gray-200 p-5 w-[270px]">
     <img :src="img" alt="" class="mx-auto">
-    <p class="font-semibold capitalize text-center">
+    <p class="text-slate-600 font-semibold capitalize text-center">
       {{ name }}
     </p>
     <div class="flex justify-center gap-2 mt-4">
-      <p v-for="items in types" :key="items.idx" class="capitalize border border-solid rounded-md px-2 border-slate-300">
+      <p v-for="items in types" :key="items.idx" class="capitalize border border-solid rounded-md px-2 border-slate-300 text-slate-600">
         {{ items.type.name }}
       </p>
     </div>
