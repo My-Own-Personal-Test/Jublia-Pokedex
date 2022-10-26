@@ -2,14 +2,12 @@
 import { defineComponent, inject, onMounted, ref } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
 import axios from 'axios'
-import Searchbar from '../components/searchBar.vue'
 import PokemonCard from '../components/pokemonCards.vue'
 import SkeletonCards from '../components/skeletonsCard.vue'
 import PokemonDetail from '../components/pokemonDetail.vue'
 
 defineComponent({
   components: {
-    Searchbar,
     PokemonCard,
     SkeletonCards,
     PokemonDetail,
@@ -22,6 +20,35 @@ const pokemonList = ref([])
 const el = ref(null)
 const open = ref(false)
 const detail = ref({})
+const pokemonTypes = ref([])
+
+const types = () => {
+  const allType = [
+    'normal',
+    'fighting',
+    'flying',
+    'poison',
+    'ground',
+    'rock',
+    'bug',
+    'ghost',
+    'steel',
+    'fire',
+    'water',
+    'grass',
+    'electric',
+    'psychic',
+    'ice',
+    'dragon',
+    'dark',
+    'fairy',
+    'unknown',
+    'shadow',
+  ]
+  allType.sort()
+  pokemonTypes.value = allType
+}
+types()
 
 const getPokemons = async (payload) => {
   const fetched = await axios.get(`${$pokeDex}pokemon?limit=21&offset=${payload ? pokemonList.value.length : 0}`)
@@ -56,7 +83,14 @@ onMounted(() => {
 <template>
   <div class="container h-full mx-auto">
     <div class="mx-auto max-w-7xl h-[10vh] my-auto grid place-items-center">
-      <Searchbar />
+      <select class="select w-full max-w-xs bg-white text-slate-500">
+        <option disabled selected>
+          Filter pokemons by type
+        </option>
+        <option v-for="T in pokemonTypes" :key="T.id">
+          {{ T }}
+        </option>
+      </select>
     </div>
 
     <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden ">
