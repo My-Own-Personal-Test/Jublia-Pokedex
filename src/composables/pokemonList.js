@@ -30,7 +30,7 @@ const usePokemonList = () => {
     }
     favoritePokemons()
   }
-  return { getPokemons, pokemonList }
+  return { getPokemons, pokemonList, favoritePokemons }
 }
 
 export default usePokemonList

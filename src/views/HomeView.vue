@@ -1,7 +1,7 @@
 <script setup>
 import { defineComponent, onMounted, ref, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import useAxios from '../../axios.config'
+import useFavoriteList from '../composables/favoriteList'
 import useFilterPokemon from '../composables/filterPokemon'
 import usePokemonList from '../composables/pokemonList'
 import PokemonCard from '../components/pokemonCards.vue'
@@ -24,7 +24,7 @@ const valueFilter = ref('')
 const faveButton = ref(false)
 const { getPokemons, pokemonList } = usePokemonList()
 const { Filter } = useFilterPokemon()
-const { axiosInstance } = useAxios()
+const { faveList } = useFavoriteList()
 
 const types = () => {
   const allType = [
@@ -72,13 +72,7 @@ const close = (payload) => {
 
 const showFavorties = async () => {
   if (!faveButton.value) {
-    const favorites = JSON.parse(localStorage.getItem('favorite'))
-    loading.value = true
-    pokemonList.value = []
-    for (let index = 0; index < favorites.length; index++) {
-      const pokemon = await axiosInstance.get(`pokemon/${favorites[index]}`)
-      pokemonList.value.push(pokemon.data)
-    }
+    faveList()
     loading.value = false
     faveButton.value = true
   }
