@@ -1,8 +1,8 @@
 <script setup>
 import { defineComponent, inject, onMounted, ref, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import axios from 'axios'
-import useFavorite from '../composables/favorite'
+import useFilterPokemon from '../composables/filterPokemon'
+import usePokemonList from '../composables/pokemonList'
 import PokemonCard from '../components/pokemonCards.vue'
 import SkeletonCards from '../components/skeletonsCard.vue'
 import PokemonDetail from '../components/pokemonDetail.vue'
@@ -14,15 +14,14 @@ defineComponent({
   },
 })
 
-const $pokeDex = inject('$pokeDex')
 const loading = ref(true)
-const pokemonList = ref([])
 const el = ref(null)
 const open = ref(false)
 const detail = ref({})
 const pokemonTypes = ref([])
 const valueFilter = ref('')
-const { getFavorite, favorite } = useFavorite()
+const { getPokemons, pokemonList } = usePokemonList()
+const { Filter } = useFilterPokemon()
 
 const types = () => {
   const allType = [
@@ -53,56 +52,9 @@ const types = () => {
 }
 types()
 
-const favoritePokemons = () => {
-  const arr = pokemonList.value
-  getFavorite()
-  const fav = favorite.value
-
-  for (let i = 0; i < arr.length; i++) {
-    for (let id = 0; id < fav.length; id++) {
-      if (arr[i].id === fav[id])
-        arr[i].favorite = true
-    }
-  }
-}
-
-const getPokemons = async (payload) => {
-  const fetched = await axios.get(`${$pokeDex}pokemon?limit=21&offset=${payload ? pokemonList.value.length : 0}`)
-  if (fetched.status === 200) {
-    const arr = fetched.data.results
-    for (let i = 0; i < arr.length; i++) {
-      const perPokemon = await axios.get(arr[i].url)
-      pokemonList.value.push(perPokemon.data)
-      loading.value = false
-    }
-  }
-  favoritePokemons()
-}
-
 const getDetailPokemon = (payload) => {
   detail.value = payload
   open.value = true
-}
-
-async function Filter(payload) {
-  if (payload === 'all') {
-    pokemonList.value = []
-    getPokemons()
-    return
-  }
-  try {
-    const filtered = await axios.get(`${$pokeDex}type/${payload}`)
-    const arr = filtered.data.pokemon
-    pokemonList.value = []
-    for (let i = 0; i < arr.length; i++) {
-      const perPokemon = await axios.get(arr[i].pokemon.url)
-      pokemonList.value.push(perPokemon.data)
-      loading.value = false
-    }
-  }
-  catch (error) {
-    console.log(error)
-  }
 }
 
 const close = (payload) => {
@@ -115,9 +67,12 @@ const close = (payload) => {
   }
 }
 
-watch(valueFilter, (val) => {
-  if (val)
-    Filter(val)
+watch(valueFilter, async (val) => {
+  loading.value = true
+  if (val) {
+    await Filter(val)
+    loading.value = false
+  }
 })
 
 useInfiniteScroll(
@@ -128,8 +83,9 @@ useInfiniteScroll(
   { distance: 21 },
 )
 
-onMounted(() => {
-  getPokemons()
+onMounted(async () => {
+  await getPokemons()
+  loading.value = false
 })
 </script>
 
@@ -148,7 +104,7 @@ onMounted(() => {
       <div v-if="!loading" ref="el" class="w-2/3 overflow-y-scroll h-full flex items-center justify-between gap-y-10 flex-wrap mx-auto">
         <PokemonCard v-for="item in pokemonList" :key="item.idx" class="cursor-pointer" :name="item.name" :img="item.sprites.front_default" :types="item.types" :favorite="item.favorite" @click="getDetailPokemon(item)" />
       </div>
-      <div v-else class="w-2/3 flex items-center justify-between gap-y-10 flex-wrap">
+      <div v-else class="mx-auto w-2/3 flex items-center justify-between gap-y-10 flex-wrap">
         <SkeletonCards v-for="item in 21" :key="item" class="animate-pulse" />
       </div>
     </div>
