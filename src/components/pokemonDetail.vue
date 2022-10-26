@@ -61,7 +61,7 @@ watch(prop, (val) => {
   <input v-model="opener" type="checkbox" class="modal-toggle">
   <div class="modal">
     <div class="modal-box bg-slate-100 relative">
-      <label class="btn btn-sm btn-circle absolute right-2 top-2 bg-slate-300 hover:bg-slate-200 border-none text-slate-600 " @click="$emit('close')">✕</label>
+      <label class="btn btn-sm btn-circle absolute right-2 top-2 bg-slate-300 hover:bg-slate-200 border-none text-slate-600 " @click="$emit('close', { asFave: false })">✕</label>
       <div v-if="!loading" class="text-center">
         <div>
           <img class="mx-auto" :src="image" height="100" alt="">
