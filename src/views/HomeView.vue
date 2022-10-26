@@ -2,6 +2,7 @@
 import { defineComponent, inject, onMounted, ref, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
 import axios from 'axios'
+import useFavorite from '../composables/favorite'
 import PokemonCard from '../components/pokemonCards.vue'
 import SkeletonCards from '../components/skeletonsCard.vue'
 import PokemonDetail from '../components/pokemonDetail.vue'
@@ -21,6 +22,7 @@ const open = ref(false)
 const detail = ref({})
 const pokemonTypes = ref([])
 const valueFilter = ref('')
+const { getFavorite, favorite } = useFavorite()
 
 const types = () => {
   const allType = [
@@ -51,6 +53,19 @@ const types = () => {
 }
 types()
 
+const favoritePokemons = () => {
+  const arr = pokemonList.value
+  getFavorite()
+  const fav = favorite.value
+
+  for (let i = 0; i < arr.length; i++) {
+    for (let id = 0; id < fav.length; id++) {
+      if (arr[i].id === fav[id])
+        arr[i].favorite = true
+    }
+  }
+}
+
 const getPokemons = async (payload) => {
   const fetched = await axios.get(`${$pokeDex}pokemon?limit=21&offset=${payload ? pokemonList.value.length : 0}`)
   if (fetched.status === 200) {
@@ -61,6 +76,7 @@ const getPokemons = async (payload) => {
       loading.value = false
     }
   }
+  favoritePokemons()
 }
 
 const getDetailPokemon = (payload) => {
@@ -120,7 +136,7 @@ onMounted(() => {
 
     <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden ">
       <div v-if="!loading" ref="el" class="w-2/3 overflow-y-scroll h-full flex items-center justify-between gap-y-10 flex-wrap mx-auto">
-        <PokemonCard v-for="item in pokemonList" :key="item.idx" class="cursor-pointer" :name="item.name" :img="item.sprites.front_default" :types="item.types" @click="getDetailPokemon(item)" />
+        <PokemonCard v-for="item in pokemonList" :key="item.idx" class="cursor-pointer" :name="item.name" :img="item.sprites.front_default" :types="item.types" :favorite="item.favorite" @click="getDetailPokemon(item)" />
       </div>
       <div v-else class="w-2/3 flex items-center justify-between gap-y-10 flex-wrap">
         <SkeletonCards v-for="item in 21" :key="item" class="animate-pulse" />
