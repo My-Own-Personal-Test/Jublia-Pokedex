@@ -1,11 +1,10 @@
 <script setup>
-import { defineComponent, inject, onMounted, ref } from 'vue'
+import { defineComponent, inject, onMounted, ref, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
 import axios from 'axios'
 import PokemonCard from '../components/pokemonCards.vue'
 import SkeletonCards from '../components/skeletonsCard.vue'
 import PokemonDetail from '../components/pokemonDetail.vue'
-
 defineComponent({
   components: {
     PokemonCard,
@@ -21,6 +20,7 @@ const el = ref(null)
 const open = ref(false)
 const detail = ref({})
 const pokemonTypes = ref([])
+const valueFilter = ref('')
 
 const types = () => {
   const allType = [
@@ -44,6 +44,7 @@ const types = () => {
     'fairy',
     'unknown',
     'shadow',
+    'all',
   ]
   allType.sort()
   pokemonTypes.value = allType
@@ -67,6 +68,32 @@ const getDetailPokemon = (payload) => {
   open.value = true
 }
 
+async function Filter(payload) {
+  if (payload === 'all') {
+    pokemonList.value = []
+    getPokemons()
+    return
+  }
+  try {
+    const filtered = await axios.get(`${$pokeDex}type/${payload}`)
+    const arr = filtered.data.pokemon
+    pokemonList.value = []
+    for (let i = 0; i < arr.length; i++) {
+      const perPokemon = await axios.get(arr[i].pokemon.url)
+      pokemonList.value.push(perPokemon.data)
+      loading.value = false
+    }
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+
+watch(valueFilter, (val) => {
+  if (val)
+    Filter(val)
+})
+
 useInfiniteScroll(
   el,
   () => {
@@ -83,11 +110,9 @@ onMounted(() => {
 <template>
   <div class="container h-full mx-auto">
     <div class="mx-auto max-w-7xl h-[10vh] my-auto grid place-items-center">
-      <select class="select w-full max-w-xs bg-white text-slate-500">
-        <option disabled selected>
-          Filter pokemons by type
-        </option>
-        <option v-for="T in pokemonTypes" :key="T.id">
+      <label for="filter">Filter pokemon by type</label>
+      <select id="filter" v-model="valueFilter" class="select w-full max-w-xs bg-white text-slate-500">
+        <option v-for="T in pokemonTypes" :key="T.id" :value="T">
           {{ T }}
         </option>
       </select>
