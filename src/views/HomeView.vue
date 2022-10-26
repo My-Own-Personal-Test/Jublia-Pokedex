@@ -107,10 +107,10 @@ onMounted(async () => {
 
 <template>
   <div class="container h-full mx-auto">
-    <div class="mx-auto max-w-7xl h-[10vh] my-auto flex justify-center items-center gap-4">
-      <div>
+    <div class="mx-auto max-w-7xl h-[12vh] my-auto flex justify-center items-center gap-4 flex-wrap">
+      <div class="flex flex-col">
         <label for="filter">Filter pokemon by type</label>
-        <select id="filter" v-model="valueFilter" class="select w-full max-w-xs bg-white text-slate-500">
+        <select id="filter" v-model="valueFilter" class="select  max-w-xs bg-white text-slate-500">
           <option v-for="T in pokemonTypes" :key="T.id" :value="T">
             {{ T }}
           </option>
@@ -118,12 +118,12 @@ onMounted(async () => {
       </div>
       <div class="mt-5">
         <button class="py-2 px-4 bg-transparent border border-solid border-slate-800 text-slate-600 rounded-lg" @click="showFavorties">
-          {{ faveButton ? 'Show All' : 'Show Favorites' }}
+          {{ faveButton ? 'Show All' : 'My Favorites' }}
         </button>
       </div>
     </div>
 
-    <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden ">
+    <div class="xl:pt-6 flex max-w-7xl mx-auto h-[88vh] overflow-hidden ">
       <div v-if="!loading" ref="el" class="w-2/3 overflow-y-scroll h-full flex items-center justify-between gap-y-10 flex-wrap mx-auto">
         <PokemonCard v-for="item in pokemonList" :key="item.idx" class="cursor-pointer" :name="item.name" :img="item.sprites.front_default" :types="item.types" :favorite="item.favorite" @click="getDetailPokemon(item)" />
       </div>
