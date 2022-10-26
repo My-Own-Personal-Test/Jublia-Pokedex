@@ -59,8 +59,8 @@ const getDetailPokemon = (payload) => {
 
 const close = (payload) => {
   if (payload.asFave) {
-    open.value = false
     getPokemons()
+    open.value = false
   }
   else {
     open.value = false

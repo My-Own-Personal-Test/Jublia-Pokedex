@@ -20,17 +20,12 @@ const image = ref('')
 const abilitiesDetail = ref([])
 const speciesDetails = ref({})
 const loading = ref(true)
-const { saveFavorite, getFavorite } = useFavorite()
+const { saveFavorite } = useFavorite()
 
 const getSpecies = async () => {
-  try {
-    const species = await axios.get(prop.detail.species.url)
-    speciesDetails.value = species.data
-    loading.value = false
-  }
-  catch (error) {
-    console.log(error)
-  }
+  const species = await axios.get(prop.detail.species.url)
+  speciesDetails.value = species.data
+  loading.value = false
 }
 
 const getAbilities = async () => {
@@ -38,13 +33,8 @@ const getAbilities = async () => {
     const arr = prop.detail.abilities
     abilitiesDetail.value = []
     for (let i = 0; i < arr.length; i++) {
-      try {
-        const abilities = await axios.get(arr[i].ability.url)
-        abilitiesDetail.value.push(abilities.data)
-      }
-      catch (error) {
-        console.log(error)
-      }
+      const abilities = await axios.get(arr[i].ability.url)
+      abilitiesDetail.value.push(abilities.data)
     }
     getSpecies()
   }
@@ -101,7 +91,7 @@ watch(prop, (val) => {
         </div>
         <div>
           <button class="py-1 px-2 bg-slate-300 rounded-lg mt-4 w-full text-slate-600 hover:bg-slate-200" @click="saveFavorite(prop.detail.id), $emit('close', { asFave: true })">
-            I choose <span class="capitalize font-semibold">{{ prop.detail.name }}</span> as my favorite(s)
+            {{ prop.detail.favorite ? 'Remove from favorite' : 'Add to favorite' }}
           </button>
         </div>
       </div>
