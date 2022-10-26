@@ -1,6 +1,7 @@
 <script setup>
 import { defineComponent, onMounted, ref, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
+import useAxios from '../../axios.config'
 import useFilterPokemon from '../composables/filterPokemon'
 import usePokemonList from '../composables/pokemonList'
 import PokemonCard from '../components/pokemonCards.vue'
@@ -20,8 +21,10 @@ const open = ref(false)
 const detail = ref({})
 const pokemonTypes = ref([])
 const valueFilter = ref('')
+const faveButton = ref(false)
 const { getPokemons, pokemonList } = usePokemonList()
 const { Filter } = useFilterPokemon()
+const { axiosInstance } = useAxios()
 
 const types = () => {
   const allType = [
@@ -67,6 +70,25 @@ const close = (payload) => {
   }
 }
 
+const showFavorties = async () => {
+  if (!faveButton.value) {
+    const favorites = JSON.parse(localStorage.getItem('favorite'))
+    loading.value = true
+    pokemonList.value = []
+    for (let index = 0; index < favorites.length; index++) {
+      const pokemon = await axiosInstance.get(`pokemon/${favorites[index]}`)
+      pokemonList.value.push(pokemon.data)
+    }
+    loading.value = false
+    faveButton.value = true
+  }
+  else {
+    pokemonList.value = []
+    getPokemons()
+    faveButton.value = false
+  }
+}
+
 watch(valueFilter, async (val) => {
   loading.value = true
   if (val) {
@@ -91,13 +113,20 @@ onMounted(async () => {
 
 <template>
   <div class="container h-full mx-auto">
-    <div class="mx-auto max-w-7xl h-[10vh] my-auto grid place-items-center">
-      <label for="filter">Filter pokemon by type</label>
-      <select id="filter" v-model="valueFilter" class="select w-full max-w-xs bg-white text-slate-500">
-        <option v-for="T in pokemonTypes" :key="T.id" :value="T">
-          {{ T }}
-        </option>
-      </select>
+    <div class="mx-auto max-w-7xl h-[10vh] my-auto flex justify-center items-center gap-4">
+      <div>
+        <label for="filter">Filter pokemon by type</label>
+        <select id="filter" v-model="valueFilter" class="select w-full max-w-xs bg-white text-slate-500">
+          <option v-for="T in pokemonTypes" :key="T.id" :value="T">
+            {{ T }}
+          </option>
+        </select>
+      </div>
+      <div class="mt-5">
+        <button class="py-2 px-4 bg-transparent border border-solid border-slate-800 text-slate-600 rounded-lg" @click="showFavorties">
+          {{ faveButton ? 'Show All' : 'Show Favorites' }}
+        </button>
+      </div>
     </div>
 
     <div class="pt-6 flex max-w-7xl mx-auto h-[90vh] overflow-hidden ">
