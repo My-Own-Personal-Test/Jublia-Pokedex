@@ -1,5 +1,5 @@
 <script setup>
-import { defineComponent, inject, onMounted, ref, watch } from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
 import useFilterPokemon from '../composables/filterPokemon'
 import usePokemonList from '../composables/pokemonList'
