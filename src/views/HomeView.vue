@@ -105,6 +105,16 @@ async function Filter(payload) {
   }
 }
 
+const close = (payload) => {
+  if (payload.asFave === true) {
+    open.value = false
+    getPokemons()
+  }
+  else {
+    open.value = false
+  }
+}
+
 watch(valueFilter, (val) => {
   if (val)
     Filter(val)
@@ -143,5 +153,5 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <PokemonDetail :open="open" :detail="detail" @close="open = false" />
+  <PokemonDetail :open="open" :detail="detail" @close="close($event)" />
 </template>

@@ -100,7 +100,7 @@ watch(prop, (val) => {
           </div>
         </div>
         <div>
-          <button class="py-1 px-2 bg-slate-300 rounded-lg mt-4 w-full text-slate-600 hover:bg-slate-200" @click="saveFavorite(prop.detail.id)">
+          <button class="py-1 px-2 bg-slate-300 rounded-lg mt-4 w-full text-slate-600 hover:bg-slate-200" @click="saveFavorite(prop.detail.id), $emit('close', { asFave: true })">
             I choose <span class="capitalize font-semibold">{{ prop.detail.name }}</span> as my favorite(s)
           </button>
         </div>
