@@ -96,7 +96,7 @@ watch(prop, (val) => {
         </div>
         <div>
           <button class="py-1 px-2 bg-slate-300 rounded-lg mt-4 w-full text-slate-600 hover:bg-slate-200" @click="saveFavorite(prop.detail.id), $emit('close', { asFave: true })">
-            {{ prop.detail.favorite ? 'Remove from favorite' : 'Add to favorite' }}
+            {{ `Add ${prop.detail.name} to favorite` }}
           </button>
         </div>
       </div>
