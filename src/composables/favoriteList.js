@@ -4,6 +4,7 @@ import usePokemonList from './pokemonList'
 const { pokemonList, favoritePokemons } = usePokemonList()
 const { axiosInstance } = useAxios()
 
+// this composables uses when the user click a button that shows the favorite pokemons and update the pokemonList for only the favorite pokemons
 const useFavoriteList = () => {
   const favorites = JSON.parse(localStorage.getItem('favorite'))
   const faveList = async () => {

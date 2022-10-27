@@ -55,11 +55,13 @@ const types = () => {
 }
 types()
 
+// param is an object that contains all the neceseary data to that will be fetched for some more data, when the modal opens
 const getDetailPokemon = (payload) => {
   detail.value = payload
   open.value = true
 }
 
+// param is a flagging that if the payload is true it will fetch the list of pokemon from the start and update the favorite list
 const close = (payload) => {
   if (payload.asFave) {
     getPokemons()
@@ -71,6 +73,7 @@ const close = (payload) => {
 }
 
 const showFavorties = async () => {
+  // this conditional block statements is for the button when clicked by the user to show the favorite list or all the pokemon
   if (!faveButton.value) {
     faveList()
     loading.value = false
@@ -83,6 +86,7 @@ const showFavorties = async () => {
   }
 }
 
+// watch function is basically watching if the dropdown menu reactive data is changed and then it will filter the pokemon list by the type
 watch(valueFilter, async (val) => {
   loading.value = true
   if (val) {
@@ -94,6 +98,7 @@ watch(valueFilter, async (val) => {
 useInfiniteScroll(
   el,
   () => {
+    // param is flagging that tells the fecth function is called to load more data
     getPokemons(true)
   },
   { distance: 21 },

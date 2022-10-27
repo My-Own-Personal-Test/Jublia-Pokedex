@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
-import axios from 'axios'
+import useAxios from '../../axios.config'
 import useFavorite from '../composables/favorite'
 
 const prop = defineProps({
@@ -15,25 +15,30 @@ const prop = defineProps({
 })
 
 defineEmits(['close'])
+
 const opener = ref(false)
 const image = ref('')
 const abilitiesDetail = ref([])
 const speciesDetails = ref({})
 const loading = ref(true)
 const { saveFavorite } = useFavorite()
+const { axiosInstance } = useAxios()
 
+// this function is called to get the pokemon species details right after abilities is fetched
 const getSpecies = async () => {
-  const species = await axios.get(prop.detail.species.url)
+  const species = await axiosInstance.get(prop.detail.species.url)
   speciesDetails.value = species.data
   loading.value = false
 }
 
+// this function is called when the value of the prop detail is changed to get new values of the pokemon's abilities
 const getAbilities = async () => {
+  // this coding block will run if the props detail of abilities is not empty and it will run and loops for all the pokemon's abilities and fetch all the abilities details
   if (prop.detail.abilities.length) {
     const arr = prop.detail.abilities
     abilitiesDetail.value = []
     for (let i = 0; i < arr.length; i++) {
-      const abilities = await axios.get(arr[i].ability.url)
+      const abilities = await axiosInstance.get(arr[i].ability.url)
       abilitiesDetail.value.push(abilities.data)
     }
     getSpecies()

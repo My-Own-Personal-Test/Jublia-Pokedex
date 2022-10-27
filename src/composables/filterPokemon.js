@@ -6,6 +6,7 @@ const { axiosInstance } = useAxios()
 
 const useFilterPokemon = () => {
   const Filter = async (payload) => {
+    // this condition block statements is checking the value fro the param: payload, if the value is 'all' then it will get all the pokemons from the API then stop the whole function process and if the value is not 'all' then it will continue the function process and get the pokemons list by type
     if (payload === 'all') {
       pokemonList.value = []
       getPokemons()
